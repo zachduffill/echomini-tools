@@ -1,0 +1,11 @@
+[project]
+name = "echomini-fix"
+version = "0.1.0"
+dependencies = ["mutagen", "Pillow", "PySide6"]
+
+[project.scripts]
+echomini-fix = "echomini_fix.main:main"
+
+[build-system] 
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
