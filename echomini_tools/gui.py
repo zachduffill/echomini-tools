@@ -11,7 +11,7 @@ def run_gui():
 
             # Create the main window
             self.window = QMainWindow()
-            self.window.setWindowTitle("echomini-fix")
+            self.window.setWindowTitle("echomini-tools")
             self.window.resize(600, 400)
             self.window.show()
 

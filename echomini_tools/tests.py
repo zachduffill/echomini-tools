@@ -4,7 +4,7 @@ from mutagen.flac import Picture
 from mutagen.id3 import APIC
 from mutagen.mp4 import MP4Cover
 
-from echomini_fix.scripts.art import resize_image, load_embedded_art
+from echomini_tools.scripts.art import resize_image, load_embedded_art
 
 def _make_test_image(wh=800, color=(255, 0, 0)):
     img = Image.new('RGB', (wh,wh), color)
