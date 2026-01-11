@@ -15,7 +15,9 @@ def fix(path, new_size=600):
     if art_data is None: return None
 
     resized = resize_image(art_data, new_size)
-    embed_new_art()
+    embed_new_art(audio, art_mime, resized)
+
+    return path
 
 def load_embedded_art(audio):
     cls = audio.__class__.__name__
