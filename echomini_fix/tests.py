@@ -66,12 +66,12 @@ def _test_embedded_art_loader(file):
 
 if __name__ == '__main__':
     _test_resize_image()
-    print("✅ art.py: resize_image()")
+    print("✅ art.py: resize_image()\n")
     _test_embedded_art_loader(_FakeFLAC())
-    print("✅ art.py: load_embedded_art(FLAC)")
+    print("✅ art.py: load_embedded_art(FLAC)\n")
     _test_embedded_art_loader(_FakeMP3())
-    print("✅ art.py: load_embedded_art(MP3)")
+    print("✅ art.py: load_embedded_art(MP3)\n")
     _test_embedded_art_loader(_FakeOGG())
-    print("✅ art.py: load_embedded_art(OGG)")
+    print("✅ art.py: load_embedded_art(OGG)\n")
     _test_embedded_art_loader(_FakeM4A())
-    print("✅ art.py: load_embedded_art(M4A)")
+    print("✅ art.py: load_embedded_art(M4A)\n")

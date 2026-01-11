@@ -8,62 +8,93 @@ from PIL.Image import Resampling
 from io import BytesIO
 from PIL import Image
 
-def fix(path):
-    pass
+def fix(path, new_size=600):
+    audio = File(path)
 
-def load_embedded_art(source):
-    if isinstance(source, str):
-        audio = File(source)    # 'source' is path
-    else:
-        audio = source          # 'source' is object
+    art_mime, art_data = load_embedded_art(audio)
+    if art_data is None: return None
 
-    if audio is None: return None
+    resized = resize_image(art_data, new_size)
+    embed_new_art()
 
+def load_embedded_art(audio):
     cls = audio.__class__.__name__
+    print(f"File is of type {cls}")
 
     match cls:
         case 'MP3' | 'ID3':
-            print("File is of type MP3/ID3")
             for frame in audio.values():
                 if isinstance(frame, APIC):
                     print("Found Art!")
                     return frame.mime, frame.data
-
             print("No Art found")
             return None
-        case 'FLAC':
-            print("File is of type FLAC")
+        case 'FLAC' | 'OggVorbis':
             if audio.pictures:
-                pic: Picture = audio.pictures[0]
+                pic = audio.pictures[0]
                 print("Found Art!")
                 return pic.mime, pic.data
-
             print("No Art found")
             return None
         case 'MP4':
-            print("File is of type M4A")
             covers = audio.get("covr")
             if covers:
                 cover = covers[0]
                 mime = "image/jpeg" if cover.imageformat == MP4Cover.FORMAT_JPEG else "image/png"
                 print("Found Art!")
                 return mime, bytes(cover)
-
             print("No Art found")
             return None
         case 'OggVorbis':
-            print("File is of type OGG")
             if audio.pictures:
                 pic = audio.pictures[0]
                 print("Found Art!")
                 return pic.mime, pic.data
-
             print("No Art found")
             return None
 
     print("Invalid Format")
     return None
 
+def embed_new_art(audio, mime, data):
+    cls = audio.__class__.__name__
+
+    if mime != "image/jpeg":
+        print("Error, mime must be JPEG!")
+        return False
+
+    match cls:
+        case 'MP3' | 'ID3':
+            audio.delall("APIC")
+            audio.add(APIC(
+                encoding=3,
+                mime=mime,
+                type=3,
+                desc="cover",
+                data=data
+            ))
+            audio.save(v2_version=3)
+            return True
+        case 'FLAC' | 'OggVorbis':
+            audio.clear_pictures()
+
+            pic = Picture()
+            pic.mime = mime
+            pic.type = 3
+            pic.desc = "cover"
+            pic.data = data
+            audio.add_picture(pic)
+
+            audio.save()
+            return True
+        case 'MP4':
+            cover = MP4Cover(data, imageformat=MP4Cover.FORMAT_JPEG)
+            audio["covr"] = [cover]
+            audio.save()
+            return True
+
+    print("Invalid Format")
+    return False
 
 def resize_image(data, new_size):
     img = Image.open(BytesIO(data))
