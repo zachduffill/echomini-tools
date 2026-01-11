@@ -11,8 +11,12 @@ from PIL import Image
 def fix(path):
     pass
 
-def _load_embedded_art(path):
-    audio = File(path)
+def load_embedded_art(source):
+    if isinstance(source, str):
+        audio = File(source)    # 'source' is path
+    else:
+        audio = source          # 'source' is object
+
     if audio is None: return None
 
     cls = audio.__class__.__name__
@@ -30,7 +34,7 @@ def _load_embedded_art(path):
         case 'FLAC':
             print("File is of type FLAC")
             if audio.pictures:
-                pic = audio.pictures[0]
+                pic: Picture = audio.pictures[0]
                 print("Found Art!")
                 return pic.mime, pic.data
 
@@ -47,22 +51,21 @@ def _load_embedded_art(path):
 
             print("No Art found")
             return None
+        case 'OggVorbis':
+            print("File is of type OGG")
+            if audio.pictures:
+                pic = audio.pictures[0]
+                print("Found Art!")
+                return pic.mime, pic.data
 
-    if isinstance(audio, OggVorbis):
-        print("File is of type OGG")
-        if audio.pictures:
-            pic = audio.pictures[0]
-            print("Found Art!")
-            return pic.mime, pic.data
-
-        print("No Art found")
-        return None
+            print("No Art found")
+            return None
 
     print("Invalid Format")
     return None
 
 
-def _resize_image(data, new_size):
+def resize_image(data, new_size):
     img = Image.open(BytesIO(data))
     img = img.convert('RGB')
 
@@ -88,23 +91,3 @@ def _crop_to_square(img):
 def _get_image_size(data: bytes):
     img = Image.open(BytesIO(data))
     return img.size
-
-# TESTING
-
-def _make_test_image(wh=800, color=(255, 0, 0)):
-    img = Image.new('RGB', (wh,wh), color)
-    buf = BytesIO()
-    img.save(buf, format='JPEG')
-    return buf.getvalue()
-
-def _test_resize_image():
-    original = _make_test_image(900)
-    resized = _resize_image(original, 600)
-
-    img = Image.open(BytesIO(resized))
-    print(img.size)
-    assert max(img.size) == 600
-    assert img.format == 'JPEG'
-
-if __name__ == '__main__':
-    _test_resize_image()
