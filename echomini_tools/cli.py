@@ -1,5 +1,5 @@
 import argparse
-from echomini_tools.scripts.art import fix
+from echomini_tools.scripts import art, lrc
 
 def run_cli(args):
     parser = argparse.ArgumentParser()
@@ -12,4 +12,6 @@ def run_cli(args):
 
     match parsed.command:
         case "art":
-            fix(parsed.target)
+            art.fix(parsed.target)
+        case "lrc":
+            lrc.get(parsed.target)
