@@ -13,46 +13,40 @@ def fix(path, new_size=600):
 
     art_mime, art_data = load_embedded_art(audio)
     if art_data is None: print("No Art found")
+    else: print("Found Art")
 
     resized = resize_image(art_data, new_size)
-    embed_new_art(audio, art_mime, resized)
+    success = embed_new_art(audio, art_mime, resized)
 
+    if success: print(f"Art resized and embedded!")
     return path
 
 def load_embedded_art(audio):
     cls = audio.__class__.__name__
-    print(f"File is of type {cls}")
+    #print(f"File is of type {cls}")
 
     match cls:
         case 'MP3' | 'ID3':
             for frame in audio.values():
                 if isinstance(frame, APIC):
-                    print("Found Art!")
                     return frame.mime, frame.data
-            print("No Art found")
             return None
         case 'FLAC' | 'OggVorbis':
             if audio.pictures:
                 pic = audio.pictures[0]
-                print("Found Art!")
                 return pic.mime, pic.data
-            print("No Art found")
             return None
         case 'MP4':
             covers = audio.get("covr")
             if covers:
                 cover = covers[0]
                 mime = "image/jpeg" if cover.imageformat == MP4Cover.FORMAT_JPEG else "image/png"
-                print("Found Art!")
                 return mime, bytes(cover)
-            print("No Art found")
             return None
         case 'OggVorbis':
             if audio.pictures:
                 pic = audio.pictures[0]
-                print("Found Art!")
                 return pic.mime, pic.data
-            print("No Art found")
             return None
 
     print("Invalid Format")
