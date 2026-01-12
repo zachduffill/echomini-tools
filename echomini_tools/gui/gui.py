@@ -1,3 +1,6 @@
+from PySide6.QtWidgets import QPushButton
+
+
 def run_gui():
     print("Launching GUI...")
 
@@ -11,6 +14,7 @@ def run_gui():
 
     from .PickerBanner import PickerBanner
     from .Tool import Tool
+    from .RunBtn import RunBtn
 
     ICON_DIR = Path(__file__).resolve().parent / "icons"
     ART_ICON = str(ICON_DIR / "art.svg")
@@ -22,7 +26,7 @@ def run_gui():
             super().__init__()
 
             self.setWindowTitle("echomini-tools")
-            self.resize(600, 400)
+            self.resize(600, 300)
 
             # central
             central = QWidget()
@@ -39,13 +43,13 @@ def run_gui():
                             "Fetches lyrics from LRCLIB and saves as .lrc",
                             LRC_ICON)
 
-            main_layout.addWidget(picker_banner)
+            run_btn = RunBtn()
 
+            main_layout.addWidget(picker_banner)
             main_layout.addWidget(art_tool)
             main_layout.addWidget(flac_tool)
             main_layout.addWidget(lrc_tool)
-
-            main_layout.addStretch()
+            main_layout.addWidget(run_btn)
 
             self.setCentralWidget(central)
 
