@@ -6,7 +6,7 @@ import ffmpeg
 
 flac_bin = None
 
-def fix_blocksize(path):
+def fix(path):
     audio = File(path)
     cls = audio.__class__.__name__
     if cls != 'FLAC':
@@ -16,19 +16,19 @@ def fix_blocksize(path):
     max_blocksize = audio.info.max_blocksize
     channels = audio.info.channels
 
-    _reduce_blocksize(path, max_blocksize, channels)
+    if max_blocksize > 4608:
+        path = _reduce_blocksize(path)
+    if channels > 2:
+        path = _downmix_channels(path)
+
     return path
 
-def _reduce_blocksize(path, blocksize, channels):
+def _downmix_channels(path):
+
+
+def _reduce_blocksize(path):
     global flac_bin
     if flac_bin is None: flac_bin = _get_flac_bin()
-
-    args = [flac_bin]
-    if blocksize > 4608: args += ["--blocksize=4608"]
-    if channels > 2: args += ["--channels=2"]
-    if len(args) == 1:
-        print(f"File {path} does not need fixing (blocksize = {blocksize}, channels = {channels})")
-        return
 
     p = Path(path)
     tmp = p.with_suffix(".tmp.flac")
@@ -37,10 +37,8 @@ def _reduce_blocksize(path, blocksize, channels):
         [flac_bin, "-d", "--stdout", str(p)],
         stdout=subprocess.PIPE
     )
-
-    args += ["-", "-o", str(tmp)]
     encode = subprocess.Popen(
-        args,
+        [flac_bin, "--blocksize=4608", "-", "-o", str(tmp)],
         stdin=decode.stdout,
     )
 
@@ -48,6 +46,7 @@ def _reduce_blocksize(path, blocksize, channels):
     encode.communicate()
 
     os.replace(tmp, p)
+    return p
 
 def _get_flac_bin():
     # check /bin
