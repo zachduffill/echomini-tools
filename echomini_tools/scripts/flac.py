@@ -2,6 +2,7 @@ import os
 import subprocess
 from pathlib import Path
 from mutagen import File
+from mutagen.flac import FLAC
 import ffmpeg
 
 flac_bin = None
@@ -16,15 +17,59 @@ def fix(path):
     max_blocksize = audio.info.max_blocksize
     channels = audio.info.channels
 
+    tmp = None
     if max_blocksize > 4608:
-        path = _reduce_blocksize(path)
+        tmp = _reduce_blocksize(path)
     if channels > 2:
-        path = _downmix_channels(path)
+        tmp = _downmix_channels(tmp or path)
+
+    if tmp is not None:
+        metadata = _extract_metadata(path)
+        os.replace(tmp, path)
+        _apply_metadata(path, metadata)
 
     return path
 
-def _downmix_channels(path):
+def _extract_metadata(path):
+    audio = FLAC(path)
+    tags = dict(audio.tags) if audio.tags else {}
+    pictures = list(audio.pictures) if audio.pictures else []
+    return tags, pictures
 
+def _apply_metadata(path, metadata):
+    audio = FLAC(path)
+    tags = metadata[0]
+    pictures = metadata[1]
+
+    # tags
+    audio.delete()
+    for key, values in tags.items():
+        for v in values:
+            audio[key] = v
+
+    # pics
+    audio.clear_pictures()
+    for pic in pictures:
+        audio.add_picture(pic)
+
+    audio.save()
+
+
+def _downmix_channels(path):
+    p = Path(path)
+    tmp = p.with_suffix(".tmp.flac")
+    print(f"{p} -> {tmp}")
+
+    (
+        ffmpeg.input(path)
+        .output(str(tmp), ac=2)
+        .run()
+    )
+
+    ## Delete first tmp file if _reduce_blocksize() ran beforehand
+    if str(p).endswith(".tmp.flac"): p.unlink(missing_ok=True)
+
+    return tmp
 
 def _reduce_blocksize(path):
     global flac_bin
@@ -45,8 +90,8 @@ def _reduce_blocksize(path):
     decode.stdout.close()
     encode.communicate()
 
-    os.replace(tmp, p)
-    return p
+    print(f"{path} -> {tmp}")
+    return tmp
 
 def _get_flac_bin():
     # check /bin

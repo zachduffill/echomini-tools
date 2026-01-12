@@ -13,4 +13,4 @@ def run_cli(args):
         case "lrc":
             lrc.get(parsed.target)
         case "flac":
-            flac.fix_blocksize(parsed.target)
+            flac.fix(parsed.target)
