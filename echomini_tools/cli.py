@@ -7,9 +7,6 @@ def run_cli(args):
     parser.add_argument("target")
     parsed = parser.parse_args(args)
 
-    print(parsed.command)  # "fix"
-    print(parsed.target)   # "path"
-
     match parsed.command:
         case "art":
             art.fix(parsed.target)

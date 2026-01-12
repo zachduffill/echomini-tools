@@ -12,7 +12,7 @@ def fix(path, new_size=600):
     audio = File(path)
 
     art_mime, art_data = load_embedded_art(audio)
-    if art_data is None: raise ValueError("No Art found")
+    if art_data is None: print("No Art found")
 
     resized = resize_image(art_data, new_size)
     embed_new_art(audio, art_mime, resized)
@@ -59,14 +59,14 @@ def load_embedded_art(audio):
     return None
 
 def embed_new_art(audio, mime, data):
-    if mime != "image/jpeg": raise ValueError(f"MIME type {mime} is not JPEG!")
+    if mime != "image/jpeg": print(f"MIME type {mime} is not JPEG!")
 
     cls = audio.__class__.__name__
 
     match cls:
         case 'MP3' | 'ID3':
-            audio.delall("APIC")
-            audio.add(APIC(
+            audio.tags.delall("APIC")
+            audio.tags.add(APIC(
                 encoding=3,
                 mime=mime,
                 type=3,

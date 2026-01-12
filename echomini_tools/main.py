@@ -11,8 +11,7 @@ def main():
 if __name__ == "__main__": main()
 
 # app to help with snowsky echo mini:
-    # normalise album art
-    # lrcget
-    # remove "comment" tags (fixes 'format not supported')
-    # flac block sizes
+    # normalise album art y
+    # lrcget y
+    # flac block sizes y
     # handles sync with local files
