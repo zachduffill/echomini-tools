@@ -1,5 +1,4 @@
-from PySide6.QtWidgets import QPushButton
-
+from ..scripts.dir import scan
 
 def run_gui():
     print("Launching GUI...")
@@ -14,7 +13,7 @@ def run_gui():
 
     from .PickerBanner import PickerBanner
     from .Tool import Tool
-    from .RunBtn import RunBtn
+    from .RunFooter import RunFooter
 
     ICON_DIR = Path(__file__).resolve().parent / "icons"
     ART_ICON = str(ICON_DIR / "art.svg")
@@ -32,26 +31,37 @@ def run_gui():
             central = QWidget()
             main_layout = QVBoxLayout(central)
 
-            picker_banner = PickerBanner()
-            art_tool = Tool("Normalise album art",
+            self.picker_banner = PickerBanner()
+            self.art_tool = Tool("Normalise album art",
                             "Resizes and crops album art to 600x600, fix for album art not showing",
                             ART_ICON)
-            flac_tool = Tool("Fix FLAC incompatibilities",
+            self.flac_tool = Tool("Fix FLAC incompatibilities",
                              "Re-encodes FLAC files to make them readable by echo mini",
                              FLAC_ICON)
-            lrc_tool = Tool("Fetch lyrics",
+            self.lrc_tool = Tool("Fetch lyrics",
                             "Fetches lyrics from LRCLIB and saves as .lrc",
                             LRC_ICON)
 
-            run_btn = RunBtn()
+            run_btn = RunFooter(self.onclick_run_btn)
 
-            main_layout.addWidget(picker_banner)
-            main_layout.addWidget(art_tool)
-            main_layout.addWidget(flac_tool)
-            main_layout.addWidget(lrc_tool)
+            main_layout.addWidget(self.picker_banner)
+            main_layout.addWidget(self.art_tool)
+            main_layout.addWidget(self.flac_tool)
+            main_layout.addWidget(self.lrc_tool)
+            main_layout.addSpacing(20)
             main_layout.addWidget(run_btn)
 
             self.setCentralWidget(central)
+
+        def onclick_run_btn(self):
+            path = Path(self.picker_banner.picker_path.text())
+
+            run_art = self.art_tool.is_checked()
+            run_flac = self.flac_tool.is_checked()
+            run_lrc = self.lrc_tool.is_checked()
+
+            if run_art or run_flac or run_lrc:
+                scan(path, run_art, run_flac, run_lrc)
 
     app = QApplication(sys.argv)
     app.styleHints().setColorScheme(Qt.ColorScheme.Dark)
