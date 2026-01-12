@@ -1,5 +1,5 @@
 import argparse
-from echomini_tools.scripts import art, lrc
+from echomini_tools.scripts import art, lrc, flac
 
 def run_cli(args):
     parser = argparse.ArgumentParser()
@@ -12,3 +12,5 @@ def run_cli(args):
             art.fix(parsed.target)
         case "lrc":
             lrc.get(parsed.target)
+        case "flac":
+            flac.fix_blocksize(parsed.target)
