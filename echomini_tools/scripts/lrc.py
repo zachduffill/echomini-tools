@@ -57,6 +57,7 @@ def _read_metadata(path):
     audio = File(path)
     if audio is None:
         print(f"Unsupported or unreadable file: {path}")
+        return None
 
     cls = audio.__class__.__name__
 

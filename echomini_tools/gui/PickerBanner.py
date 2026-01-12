@@ -27,6 +27,7 @@ class PickerBanner(QWidget):
         layout.addWidget(browse_button)
 
     def update_placeholder(self, mode):
+        self.picker_path.setText("")
         if mode == "Song File":
             self.picker_path.setPlaceholderText("Select a song file...")
         elif mode == "Music Folder":

@@ -42,26 +42,35 @@ def run_gui():
                             "Fetches lyrics from LRCLIB and saves as .lrc",
                             LRC_ICON)
 
-            run_btn = RunFooter(self.onclick_run_btn)
+            self.run_btn = RunFooter(self.onclick_run_btn)
 
             main_layout.addWidget(self.picker_banner)
             main_layout.addWidget(self.art_tool)
             main_layout.addWidget(self.flac_tool)
             main_layout.addWidget(self.lrc_tool)
             main_layout.addSpacing(20)
-            main_layout.addWidget(run_btn)
+            main_layout.addWidget(self.run_btn)
 
             self.setCentralWidget(central)
 
         def onclick_run_btn(self):
-            path = Path(self.picker_banner.picker_path.text())
+            picker_path = self.picker_banner.picker_path.text()
+            path = Path(picker_path)
+            if (not path.is_file() and not path.is_dir()) or picker_path.strip() == "":
+                self.run_btn.status.setText("Invalid filepath!")
+                return None
 
             run_art = self.art_tool.is_checked()
             run_flac = self.flac_tool.is_checked()
             run_lrc = self.lrc_tool.is_checked()
 
             if run_art or run_flac or run_lrc:
+                self.run_btn.status.setText("Running...")
                 scan(path, run_art, run_flac, run_lrc)
+                return True
+            else:
+                self.run_btn.status.setText("No tools selected")
+                return False
 
     app = QApplication(sys.argv)
     app.styleHints().setColorScheme(Qt.ColorScheme.Dark)
