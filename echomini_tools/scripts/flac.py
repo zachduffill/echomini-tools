@@ -1,13 +1,12 @@
 import os
 import subprocess
 from pathlib import Path
-
 from mutagen import File
-from mutagen.flac import FLAC
+import ffmpeg
 
 flac_bin = None
 
-def fix_blocksize(path, new_blocksize = 2048):
+def fix_blocksize(path):
     audio = File(path)
     cls = audio.__class__.__name__
     if cls != 'FLAC':
@@ -15,19 +14,21 @@ def fix_blocksize(path, new_blocksize = 2048):
         return None
 
     max_blocksize = audio.info.max_blocksize
-    if max_blocksize is None:
-        print(f"Warning: could not read blocksize for '{path}'")
-        return None
-    if max_blocksize < 4000:
-        print(f"'{path}' blocksize is already < 4000, no changes made")
-        return None
+    channels = audio.info.channels
 
-    _reduce_blocksize(path, new_blocksize)
+    _reduce_blocksize(path, max_blocksize, channels)
     return path
 
-def _reduce_blocksize(path, new_blocksize):
+def _reduce_blocksize(path, blocksize, channels):
     global flac_bin
     if flac_bin is None: flac_bin = _get_flac_bin()
+
+    args = [flac_bin]
+    if blocksize > 4608: args += ["--blocksize=4608"]
+    if channels > 2: args += ["--channels=2"]
+    if len(args) == 1:
+        print(f"File {path} does not need fixing (blocksize = {blocksize}, channels = {channels})")
+        return
 
     p = Path(path)
     tmp = p.with_suffix(".tmp.flac")
@@ -37,8 +38,9 @@ def _reduce_blocksize(path, new_blocksize):
         stdout=subprocess.PIPE
     )
 
+    args += ["-", "-o", str(tmp)]
     encode = subprocess.Popen(
-        [flac_bin, f"--blocksize={new_blocksize}", "-", "-o", str(tmp)],
+        args,
         stdin=decode.stdout,
     )
 
