@@ -16,6 +16,7 @@ class Tool(QWidget):
         # icon
         icon = QSvgWidget(icon_path)
         icon.setFixedSize(40,40)
+        icon.setStyleSheet("""color: #fff""")
         layout.addWidget(icon)
 
         # text

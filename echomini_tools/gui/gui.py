@@ -3,9 +3,9 @@ def run_gui():
 
     from PySide6.QtWidgets import (
         QApplication, QMainWindow, QWidget,
-        QVBoxLayout, QHBoxLayout, QComboBox,
-        QPushButton, QLineEdit, QFileDialog,
+        QVBoxLayout,
     )
+    from PySide6.QtGui import Qt
     import sys
     from pathlib import Path
 
@@ -40,14 +40,17 @@ def run_gui():
                             LRC_ICON)
 
             main_layout.addWidget(picker_banner)
+
             main_layout.addWidget(art_tool)
             main_layout.addWidget(flac_tool)
             main_layout.addWidget(lrc_tool)
+
             main_layout.addStretch()
 
             self.setCentralWidget(central)
 
     app = QApplication(sys.argv)
+    app.styleHints().setColorScheme(Qt.ColorScheme.Dark)
     window = MainWindow()
     window.show()
     app.exec()
