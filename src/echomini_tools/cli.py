@@ -1,5 +1,6 @@
 import argparse
-from echomini_tools.scripts import art, lrc, flac, dir
+from src.echomini_tools.scripts import lrc, dir, art, flac
+
 
 def run_cli(args):
     parser = argparse.ArgumentParser()

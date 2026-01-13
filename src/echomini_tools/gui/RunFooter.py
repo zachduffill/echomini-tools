@@ -1,6 +1,6 @@
 from PySide6.QtWidgets import QWidget, QHBoxLayout, QPushButton, QLabel
 
-from echomini_tools.gui.LogWindow import LogWindow
+from src.echomini_tools.gui.LogWindow import LogWindow
 
 
 class RunFooter(QWidget):
