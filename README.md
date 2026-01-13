@@ -7,7 +7,7 @@ A set of tools that make your song files more compatible with the snowsky echo m
   - re-embeds as 600x600 jpeg
 - Fix FLAC incompatibilities
   - fixes "Format not supported!" error
-  - reduces blocksize to 4608
+  - reduces blocksize to 4608, downmixes to stereo
 - Lyric grabber
   - fetches lyrics from LRCLIB and saves as .lrc
 
