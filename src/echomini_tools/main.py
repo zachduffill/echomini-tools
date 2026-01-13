@@ -1,6 +1,6 @@
 import sys
 from .cli import run_cli
-from src.echomini_tools.gui.gui import run_gui
+from .gui.gui import run_gui
 
 def main():
     if len(sys.argv) > 1:
