@@ -1,5 +1,5 @@
 # echomini-tools
-A set of tools that make your song files more compatible with the snowsky echo mini.
+tools to make your song files more compatible with the snowsky echo mini.
 <br/>Supports .FLAC .MP3 .OGG .M4A
 
 - Normalise album art
