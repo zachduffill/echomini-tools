@@ -1,5 +1,5 @@
 import argparse
-from src.echomini_tools.scripts import lrc, dir, art, flac
+from .scripts import lrc, dir, art, flac
 
 
 def run_cli(args):

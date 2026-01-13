@@ -1,5 +1,5 @@
 from pathlib import Path
-from src.echomini_tools.scripts import lrc, art, flac
+from ..scripts import lrc, art, flac
 
 
 def scan(root, run_art=True, run_flac=True, run_lrc=True, out=print, status=print):
