@@ -1,21 +1,21 @@
 from pathlib import Path
 from echomini_tools.scripts import art, lrc, flac
 
-def scan(root, run_flac=True, run_art=True, run_lrc=True):
+def scan(root, run_flac=True, run_art=True, run_lrc=True, out=print, status=None):
     root = Path(root)
 
-    for path in root.rglob("*"):
-        if not path.is_file():
-            continue
+    paths = [p for p in root.rglob("*") if p.is_file()]
+    total = len(paths)
+
+    for i in range(total):
+        path = paths[i]
+        if status: status(f"[{i+1}/{total}] {path.name}")
 
         if run_flac and path.suffix.lower() == ".flac":
-            print(f"Processing FLAC: {path}")
-            flac.fix(str(path))
+            flac.fix(str(path),_out=out)
 
         if run_art and path.suffix.lower() in {".mp3", ".flac", ".m4a", ".ogg"}:
-            print(f"Fixing art: {path}")
-            art.fix(str(path))
+            art.fix(str(path),_out=out)
 
         if run_lrc:
-            print(f"Fetching lyrics: {path}")
-            lrc.get(str(path))
+            lrc.get(str(path),_out=out)

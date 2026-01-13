@@ -79,7 +79,7 @@ def run_gui():
                     self.set_status("Done!")
 
                 elif self.picker_banner.picker_mode_box.currentText() == "Music Folder":
-                    dir.scan(path, run_art, run_flac, run_lrc)
+                    dir.scan(path, run_art, run_flac, run_lrc, out=self.log, status=self.set_status)
 
                 if len(self.run_btn.log) > 0:
                     self.run_btn.show_log_btn()
