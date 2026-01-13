@@ -29,12 +29,11 @@ def fix(path, new_size=600, _out=None):
         out(f"No Art found: {path}")
         return False
 
-    out(f"Found Art: {path}")
     resized = resize_image(art_data, new_size)
     success = embed_new_art(audio, art_mime, resized)
 
     if success:
-        out(f"Done")
+        out(f"Art fixed!")
         return True
     return False
 
@@ -53,6 +52,8 @@ def load_embedded_art(audio):
                 pic = audio.pictures[0]
             if pic is None and "metadata_block_picture" in audio:
                 pic = Picture(base64.b64decode(audio["metadata_block_picture"][0]))
+
+            if pic is None: return None, None
             return pic.mime, pic.data
         case 'MP4':
             covers = audio.get("covr")

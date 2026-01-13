@@ -22,7 +22,7 @@ def get(filepath,_out):
         if synced:
             outpath = (parent_dir / filename_no_ext).with_suffix(".lrc")
             save(outpath, lrc)
-            out(f"Lyrics saved to: {outpath}'")
+            out(f"Lyrics saved!")
         else:
             out(f"Lyrics found, but no synced lyrics available: '{metadata['title']} - {metadata['artist']}'")
 

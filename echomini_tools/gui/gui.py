@@ -68,12 +68,15 @@ def run_gui():
                 if self.picker_banner.picker_mode_box.currentText() == "Song File":
                     if run_art:
                         self.set_status("Fixing art...")
+                        QApplication.processEvents()
                         art.fix(str(path), _out=self.log)
                     if run_flac:
                         self.set_status("Re-encoding FLAC...")
+                        QApplication.processEvents()
                         flac.fix(str(path), _out=self.log)
                     if run_lrc:
                         self.set_status("Fetching lyrics...")
+                        QApplication.processEvents()
                         lrc.get(str(path), _out=self.log)
 
                     self.set_status("Done!")

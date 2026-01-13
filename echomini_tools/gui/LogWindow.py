@@ -5,7 +5,7 @@ class LogWindow(QDialog):
     def __init__(self, log, parent=None):
         super().__init__(parent)
         self.setWindowTitle("Logs")
-        self.resize(600,400)
+        self.resize(900,400)
 
         layout = QVBoxLayout()
         logtext = "\n".join(log)
@@ -30,5 +30,5 @@ class LogWindow(QDialog):
         self.textbox.clear()
         self.parent().log = []
         self.parent().log_button.hide()
-        self.parent().set
+        self.parent().status.setText("Status")
         self.close()

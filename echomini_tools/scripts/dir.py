@@ -4,7 +4,7 @@ from echomini_tools.scripts import art, lrc, flac
 def scan(root, run_flac=True, run_art=True, run_lrc=True, out=print, status=None):
     root = Path(root)
 
-    paths = [p for p in root.rglob("*") if p.is_file()]
+    paths = [p for p in root.rglob("*") if (p.is_file() and p.suffix.lower() in {".flac", ".m4a", ".ogg", "mp3"}) ]
     total = len(paths)
 
     for i in range(total):

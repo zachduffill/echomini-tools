@@ -33,7 +33,7 @@ def fix(path, _out):
         metadata = _extract_metadata(path)
         os.replace(tmp, path)
         _apply_metadata(path, metadata)
-        out("Done")
+        out("FLAC fixed!")
     else:
         out(f"FLAC does not need fixing: {path}")
 
