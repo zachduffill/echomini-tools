@@ -1,10 +1,10 @@
 [project]
-name = "echomini-fix"
+name = "echomini-tools"
 version = "0.1.0"
 dependencies = ["mutagen", "Pillow", "PySide6", "requests", "pathlib", "ffmpeg-python"]
 
 [project.scripts]
-echomini-fix = "echomini_fix.main:main"
+echomini-tools = "echomini_tools.main:main"
 
 [build-system] 
 requires = ["setuptools>=61.0"]
