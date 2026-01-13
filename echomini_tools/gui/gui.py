@@ -26,6 +26,7 @@ def run_gui():
 
             self.setWindowTitle("echomini-tools")
             self.resize(600, 300)
+            self.running = False
 
             # central
             central = QWidget()
@@ -54,6 +55,8 @@ def run_gui():
             self.setCentralWidget(central)
 
         def onclick_run_btn(self):
+            if self.running: return
+
             picker_path = self.picker_banner.picker_path.text()
             path = Path(picker_path)
             if (not path.is_file() and not path.is_dir()) or picker_path.strip() == "":
@@ -65,18 +68,16 @@ def run_gui():
             run_lrc = self.lrc_tool.is_checked()
 
             if run_art or run_flac or run_lrc:
+                self.running = True
                 if self.picker_banner.picker_mode_box.currentText() == "Song File":
                     if run_art:
                         self.set_status("Fixing art...")
-                        QApplication.processEvents()
                         art.fix(str(path), _out=self.log)
                     if run_flac:
                         self.set_status("Re-encoding FLAC...")
-                        QApplication.processEvents()
                         flac.fix(str(path), _out=self.log)
                     if run_lrc:
                         self.set_status("Fetching lyrics...")
-                        QApplication.processEvents()
                         lrc.get(str(path), _out=self.log)
 
                     self.set_status("Done!")
@@ -84,6 +85,7 @@ def run_gui():
                 elif self.picker_banner.picker_mode_box.currentText() == "Music Folder":
                     dir.scan(path, run_art, run_flac, run_lrc, out=self.log, status=self.set_status)
 
+                self.running = False
                 if len(self.run_btn.log) > 0:
                     self.run_btn.show_log_btn()
 
@@ -93,6 +95,7 @@ def run_gui():
 
         def set_status(self, status):
             self.run_btn.status.setText(status)
+            QApplication.processEvents()
 
         def log(self, line):
             self.run_btn.log.append(line)

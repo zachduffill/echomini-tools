@@ -35,7 +35,6 @@ class Tool(QWidget):
         layout.addLayout(text)
         layout.addStretch()
         self.checkbox = QCheckBox()
-        self.checkbox.setChecked(True)
         self.checkbox.setStyleSheet(""" QCheckBox::indicator { width: 30px; height: 30px; } """)
         layout.addWidget(self.checkbox)
 

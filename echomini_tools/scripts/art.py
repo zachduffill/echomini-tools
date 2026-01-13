@@ -14,7 +14,7 @@ def fix(path, new_size=600, _out=None):
     global out
     if _out is not None: out = _out
 
-    out(f"\nFixing art: {path}")
+    out(f"Fixing art: {path}")
 
     audio = File(path)
     cls = audio.__class__.__name__

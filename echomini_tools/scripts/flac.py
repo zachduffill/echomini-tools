@@ -12,7 +12,7 @@ def fix(path, _out):
     global out
     if _out is not None: out = _out
 
-    out(f"\nFixing FLAC: {path}")
+    out(f"Fixing FLAC: {path}")
 
     audio = File(path)
     cls = audio.__class__.__name__

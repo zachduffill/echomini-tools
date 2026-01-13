@@ -8,17 +8,23 @@ def get(filepath,_out):
     global out
     if _out is not None: out = _out
 
-    out(f"\nGrabbing lyrics: {filepath}")
+    p = Path(filepath)
+    parent_dir = p.parent
+    filename_no_ext = p.stem
+
+    out(f"Grabbing lyrics: {filepath}")
+
+    lrc_path = p.with_suffix(".lrc")
+    if lrc_path.exists():
+        out(f"'{lrc_path.name}' already exists")
+        return
 
     metadata = _read_metadata(filepath)
     if metadata is None: return
+
     synced,lrc = fetch(metadata["artist"], metadata["title"], metadata["album"], metadata["duration"])
 
     if lrc is not None:
-        p = Path(filepath)
-        parent_dir = p.parent
-        filename_no_ext = p.stem
-
         if synced:
             outpath = (parent_dir / filename_no_ext).with_suffix(".lrc")
             save(outpath, lrc)
