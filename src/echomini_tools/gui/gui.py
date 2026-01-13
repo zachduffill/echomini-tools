@@ -10,12 +10,13 @@ def run_gui():
     from PySide6.QtGui import Qt
     import sys
     from pathlib import Path
+    from importlib.resources import files
 
     from .PickerBanner import PickerBanner
     from .Tool import Tool
     from .RunFooter import RunFooter
 
-    ICON_DIR = Path(__file__).resolve().parent / "icons"
+    ICON_DIR = files("echomini_tools.gui.icons")
     ART_ICON = str(ICON_DIR / "art.svg")
     LRC_ICON = str(ICON_DIR / "lrc.svg")
     FLAC_ICON = str(ICON_DIR / "flac.svg")
