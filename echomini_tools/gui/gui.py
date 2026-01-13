@@ -1,4 +1,4 @@
-from ..scripts.dir import scan
+from ..scripts import art, flac, lrc, dir
 
 def run_gui():
     print("Launching GUI...")
@@ -36,7 +36,7 @@ def run_gui():
                             "Resizes and crops album art to 600x600, fix for album art not showing",
                             ART_ICON)
             self.flac_tool = Tool("Fix FLAC incompatibilities",
-                             "Re-encodes FLAC files to make them readable by echo mini",
+                             "Re-encodes FLAC files (Block size reduction, and downmix channels to stereo)",
                              FLAC_ICON)
             self.lrc_tool = Tool("Fetch lyrics",
                             "Fetches lyrics from LRCLIB and saves as .lrc",
@@ -57,20 +57,42 @@ def run_gui():
             picker_path = self.picker_banner.picker_path.text()
             path = Path(picker_path)
             if (not path.is_file() and not path.is_dir()) or picker_path.strip() == "":
-                self.run_btn.status.setText("Invalid filepath!")
-                return None
+                self.set_status("Invalid filepath!")
+                return
 
             run_art = self.art_tool.is_checked()
             run_flac = self.flac_tool.is_checked()
             run_lrc = self.lrc_tool.is_checked()
 
             if run_art or run_flac or run_lrc:
-                self.run_btn.status.setText("Running...")
-                scan(path, run_art, run_flac, run_lrc)
-                return True
+                if self.picker_banner.picker_mode_box.currentText() == "Song File":
+                    if run_art:
+                        self.set_status("Fixing art...")
+                        art.fix(str(path), _out=self.log)
+                    if run_flac:
+                        self.set_status("Re-encoding FLAC...")
+                        flac.fix(str(path), _out=self.log)
+                    if run_lrc:
+                        self.set_status("Fetching lyrics...")
+                        lrc.get(str(path), _out=self.log)
+
+                    self.set_status("Done!")
+
+                elif self.picker_banner.picker_mode_box.currentText() == "Music Folder":
+                    dir.scan(path, run_art, run_flac, run_lrc)
+
+                if len(self.run_btn.log) > 0:
+                    self.run_btn.show_log_btn()
+
             else:
-                self.run_btn.status.setText("No tools selected")
-                return False
+                self.set_status("No tools selected")
+                return
+
+        def set_status(self, status):
+            self.run_btn.status.setText(status)
+
+        def log(self, line):
+            self.run_btn.log.append(line)
 
     app = QApplication(sys.argv)
     app.styleHints().setColorScheme(Qt.ColorScheme.Dark)

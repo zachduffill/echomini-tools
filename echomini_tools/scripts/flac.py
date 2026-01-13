@@ -6,12 +6,18 @@ from mutagen.flac import FLAC
 import ffmpeg
 
 flac_bin = None
+out = print
 
-def fix(path):
+def fix(path, _out):
+    global out
+    if _out is not None: out = _out
+
+    out(f"\nFixing FLAC: {path}")
+
     audio = File(path)
     cls = audio.__class__.__name__
     if cls != 'FLAC':
-        print(f"Warning: '{path}' is not a FLAC file")
+        out(f"not a FLAC file: {path}")
         return None
 
     max_blocksize = audio.info.max_blocksize
@@ -27,6 +33,9 @@ def fix(path):
         metadata = _extract_metadata(path)
         os.replace(tmp, path)
         _apply_metadata(path, metadata)
+        out("Done")
+    else:
+        out(f"FLAC does not need fixing: {path}")
 
     return path
 
@@ -58,7 +67,6 @@ def _apply_metadata(path, metadata):
 def _downmix_channels(path):
     p = Path(path)
     tmp = p.with_suffix(".tmp.flac")
-    print(f"{p} -> {tmp}")
 
     (
         ffmpeg.input(path)
@@ -90,7 +98,6 @@ def _reduce_blocksize(path):
     decode.stdout.close()
     encode.communicate()
 
-    print(f"{path} -> {tmp}")
     return tmp
 
 def _get_flac_bin():

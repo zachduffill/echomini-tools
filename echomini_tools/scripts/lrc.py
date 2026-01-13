@@ -2,8 +2,16 @@ import requests
 import urllib.parse
 from pathlib import Path
 
-def get(filepath):
+out = print
+
+def get(filepath,_out):
+    global out
+    if _out is not None: out = _out
+
+    out(f"\nGrabbing lyrics: {filepath}")
+
     metadata = _read_metadata(filepath)
+    if metadata is None: return
     synced,lrc = fetch(metadata["artist"], metadata["title"], metadata["album"], metadata["duration"])
 
     if lrc is not None:
@@ -14,9 +22,9 @@ def get(filepath):
         if synced:
             outpath = (parent_dir / filename_no_ext).with_suffix(".lrc")
             save(outpath, lrc)
-            print(f"Lyrics saved to '{outpath}'")
+            out(f"Lyrics saved to: {outpath}'")
         else:
-            print(f"Lyrics found, but no synced lyrics available: '{metadata['title']} - {metadata['artist']}'")
+            out(f"Lyrics found, but no synced lyrics available: '{metadata['title']} - {metadata['artist']}'")
 
 def fetch(artist, title, album, duration):
     base_url = "https://lrclib.net/api/get"
@@ -41,11 +49,11 @@ def fetch(artist, title, album, duration):
         else:
             return False, data.get("plainLyrics")
     elif req.status_code == 404:
-        print(f"Could not find lyrics for '{title} - {artist}'")
+        out(f"Could not find lyrics for '{title} - {artist}'")
     else:
-        print(f"Error {req.status_code} when searching for lyrics for '{title} - {artist}'")
+        out(f"Error {req.status_code} when searching for lyrics for '{title} - {artist}'")
 
-    return (None,None)
+    return None,None
 
 def save(path, lyrics):
     with open(path, "w", encoding="utf-8") as f:
@@ -56,7 +64,7 @@ from mutagen import File
 def _read_metadata(path):
     audio = File(path)
     if audio is None:
-        print(f"Unsupported or unreadable file: {path}")
+        out(f"Unsupported or unreadable file: {path}")
         return None
 
     cls = audio.__class__.__name__
@@ -83,7 +91,8 @@ def _read_metadata(path):
             album = tags.get("\xa9alb", [None])[0]
 
     if title is None or artist is None:
-        print(f"Insufficient tag data for grabbing lyrics: {path}")
+        out(f"Insufficient tag data for grabbing lyrics: {path}")
+        return None
 
     return {
         "artist": artist,
