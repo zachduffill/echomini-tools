@@ -109,6 +109,7 @@ def embed_new_art(audio, mime, data):
                 pic.type = 3
                 pic.desc = "cover"
                 pic.data = data
+
                 encoded = base64.b64encode(pic.write()).decode("ascii")
                 audio["METADATA_BLOCK_PICTURE"] = [encoded]
 
