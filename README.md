@@ -10,6 +10,7 @@ tools to make your song files more compatible with the snowsky echo mini.
   - reduces blocksize to 4608, downmixes to stereo
 - Lyric grabber
   - fetches lyrics from LRCLIB and saves as .lrc
+  - WARNING: not recommended to use this in folder mode on a large number of files (100+) at one time, the requests will timeout, and processing the files will take much longer.
 
 ## Installation
 ```bash
