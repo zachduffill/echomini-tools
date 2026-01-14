@@ -11,3 +11,25 @@ tools to make your song files more compatible with the snowsky echo mini.
 - Lyric grabber
   - fetches lyrics from LRCLIB and saves as .lrc
 
+## Installation
+```bash
+pipx install git+https://github.com/zachduffill/echomini-tools.git
+```
+
+## CLI
+Running echomini-tools normally will launch the GUI.
+<br/>If you add arguments it can be run as a CLI.
+```bash
+echomini-tools flac {path}
+```
+```bash
+echomini-tools art {path}
+```
+```bash
+echomini-tools lrc {path}
+```
+```bash
+echomini-tools dir {path} --no-flac --no-art --no-lrc
+```
+
+
