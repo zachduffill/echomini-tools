@@ -46,15 +46,18 @@ def load_embedded_art(audio):
                 if isinstance(frame, APIC):
                     return frame.mime, frame.data
             return None, None
-        case 'FLAC' | 'OggVorbis':
-            pic = None
+        case 'FLAC':
             if audio.pictures:
                 pic = audio.pictures[0]
-            if pic is None and "metadata_block_picture" in audio:
-                pic = Picture(base64.b64decode(audio["metadata_block_picture"][0]))
+                return pic.mime, pic.data
 
-            if pic is None: return None, None
-            return pic.mime, pic.data
+            return None, None
+        case 'OggVorbis':
+            if "metadata_block_picture" in audio:
+                pic = Picture(base64.b64decode(audio["metadata_block_picture"][0]))
+                return pic.mime, pic.data
+
+            return None, None
         case 'MP4':
             covers = audio.get("covr")
             if covers:
