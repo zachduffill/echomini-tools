@@ -88,7 +88,7 @@ def embed_new_art(audio, mime, data):
             ))
             audio.save(v2_version=3)
             return True
-        case 'FLAC' | 'OggVorbis':
+        case 'FLAC':
             audio.clear_pictures()
 
             pic = Picture()
@@ -100,6 +100,23 @@ def embed_new_art(audio, mime, data):
 
             audio.save()
             return True
+        case 'OggVorbis':
+            if "METADATA_BLOCK_PICTURE" in audio:
+                audio.pop("METADATA_BLOCK_PICTURE", None)
+
+                pic = Picture()
+                pic.mime = mime
+                pic.type = 3
+                pic.desc = "cover"
+                pic.data = data
+                audio.add_picture(pic)
+
+                encoded = base64.b64encode(pic.write()).decode("ascii")
+                audio["METADATA_BLOCK_PICTURE"] = [encoded]
+                audio.save()
+                return True
+
+
         case 'MP4':
             cover = MP4Cover(data, imageformat=MP4Cover.FORMAT_JPEG)
             audio["covr"] = [cover]
